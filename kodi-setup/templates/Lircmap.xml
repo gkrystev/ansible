@@ -6,5 +6,10 @@
                 <menu>KEY_CONTEXT_MENU</menu>
                 <start>KEY_HOME</start>
                 <display>KEY_SWITCHVIDEOMODE</display>
+                <back>KEY_DELETE</back>
+                <back>KEY_RED</back>
+                <back>KEY_GREEN</back>
+                <back>KEY_BLUE</back>
+                <back>KEY_YELLOW</back>
         </remote>
 </lircmap>
