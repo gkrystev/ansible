@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lircmap>
+        <remote device="linux-input-layer">
+                <back>KEY_BACKSPACE</back>
+                <back>KEY_POWER</back>
+                <menu>KEY_CONTEXT_MENU</menu>
+                <start>KEY_HOME</start>
+                <display>KEY_SWITCHVIDEOMODE</display>
+        </remote>
+</lircmap>

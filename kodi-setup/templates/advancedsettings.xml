@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<advancedsettings>
+        <videodatabase>
+                <name>MyVideos</name>
+                <host>{{ kodi_db.ip }}</host>
+                <user>{{ kodi_db.username }}</user>
+                <pass>{{ kodi_db.password }}</pass>
+                <type>mysql</type>
+                <port>{{ kodi_db.port }}</port>
+        </videodatabase>
+        <musicdatabase>
+                <name>MyMusic</name>
+                <host>{{ kodi_db.ip }}</host>
+                <user>{{ kodi_db.username }}</user>
+                <pass>{{ kodi_db.password }}</pass>
+                <type>mysql</type>
+                <port>{{ kodi_db.port }}</port>
+        </musicdatabase>
+        <videolibrary>
+                <importwatchedstate>true</importwatchedstate>
+                <importresumepoint>true</importresumepoint>
+        </videolibrary>
+        <video>
+                <excludefromscan action="append">
+                        <regexp>(~uTorrentPartFile)</regexp>
+                </excludefromscan>
+                <excludefromlisting action="append">
+                        <regexp>(~uTorrentPartFile)</regexp>
+                </excludefromlisting>
+        </video>
+</advancedsettings>
+

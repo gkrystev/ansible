@@ -1,0 +1,4 @@
+Serials         {{ nas.ip }}:/i-data/{{ nas.id }}/video/Serials
+Movies          {{ nas.ip }}:/i-data/{{ nas.id }}/video/Movies
+Subtitles       {{ nas.ip }}:/i-data/{{ nas.id }}/video/Subtitles
+

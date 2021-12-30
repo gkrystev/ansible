@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars_prompt:
+    - name: kodi_password
+      prompt: Kodi database password?
+      private: yes
+  roles:
+   - role: kodi-setup
+

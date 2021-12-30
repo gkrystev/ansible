@@ -1,0 +1,110 @@
+---
+# tasks file for kodi
+
+- name: System packages
+  package:
+    name:
+      - build-essential 
+      - python3-pip 
+      - python3-dev
+      - python3-crypto 
+      - libffi-dev 
+      - libssl-dev 
+      - libnss3
+      - autofs
+
+- name: Python packages
+  pip:
+    name:
+      - setuptools
+      - wheel
+      - pycryptodomex
+      - padding
+
+- name: AutoFS mnt config
+  template:
+    src: auto.mnt
+    dest: /etc/auto.mnt
+    owner: root
+    group: root
+    mode: 0644
+  register: autofs_config
+
+- name: AutoFS master config
+  lineinfile:
+    path: /etc/auto.master
+    line: /mnt  /etc/auto.mnt
+  register: autofs_master
+
+- name: AutoFS service
+  service:
+    name: autofs
+    state: restarted
+  when: (autofs_config is changed) or
+        (autofs_master is changed)
+
+- name: Kodi advancedsettings.xml
+  template:
+    src: advancedsettings.xml
+    dest: /home/osmc/.kodi/userdata/advancedsettings.xml
+    owner: osmc
+    group: osmc
+    mode: 0644
+  register: kodi_advancedsettings
+
+- name: IR sensor setup
+  lineinfile:
+    path: /boot/config-user.txt
+    line: "dtoverlay=gpio-ir,gpio_pin={{ ir_pins.rx }}"
+
+- name: PoE Hat fan control
+  blockinfile:
+    path: /boot/config-user.txt
+    block: |
+      dtparam=poe_fan_temp0=65000,poe_fan_temp0_hyst=5000
+      dtparam=poe_fan_temp1=67000,poe_fan_temp1_hyst=2000
+      dtparam=poe_fan_temp2=68000,poe_fan_temp2_hyst=2000
+      dtparam=poe_fan_temp3=69000,poe_fan_temp3_hyst=2000
+
+- name: IR remote config for Lirc
+  template:
+    src: "{{ ir_remote }}-lircd.conf"
+    dest: "/etc/lirc/{{ ir_remote }}-lircd.conf"
+    owner: root
+    group: root
+    mode: 0644
+  register: ir_remote_config
+
+- name: Lirc config file
+  file:
+    force: true
+    state: link
+    src: "{{ ir_remote }}-lircd.conf"
+    dest: /etc/lirc/lircd.conf
+    owner: root
+    group: root
+  register: lirc_config
+
+- name: Lirc service
+  service:
+    name: lircd_helper@lirc0
+    state: restarted
+  when: (ir_remote_config is changed) or
+        (lirc_config is changed)
+
+- name: Kodi Lirckeymap
+  template:
+    src: Lircmap.xml
+    dest: /home/osmc/.kodi/userdata/Lircmap.xml
+    owner: osmc
+    group: osmc
+    mode: 0644
+  register: mediacenter_lircmap
+
+- name: MediaCenter service
+  service:
+    name: mediacenter
+    state: restarted
+  when: (mediacenter_lircmap is changed) or
+        (kodi_advancedsettings is changed)
+

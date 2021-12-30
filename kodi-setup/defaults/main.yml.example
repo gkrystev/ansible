@@ -1,0 +1,15 @@
+---
+# defaults file for kodi
+
+nas:
+  ip: 0.0.0.0
+  id: xxxxxxx
+kodi_db:
+  ip: 0.0.0.0
+  port: 3306
+  username: kodi
+  password: "{{ kodi_password }}"
+ir_remote: mag254
+ir_pins:
+  rx: 18
+  tx: 17
