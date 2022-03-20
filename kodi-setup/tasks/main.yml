@@ -12,6 +12,7 @@
       - libssl-dev 
       - libnss3
       - autofs
+  tags: packages
 
 - name: Python packages
   pip:
@@ -20,6 +21,7 @@
       - wheel
       - pycryptodomex
       - padding
+  tags: packages
 
 - name: AutoFS mnt config
   template:
@@ -29,12 +31,14 @@
     group: root
     mode: 0644
   register: autofs_config
+  tags: autofs
 
 - name: AutoFS master config
   lineinfile:
     path: /etc/auto.master
     line: /mnt  /etc/auto.mnt
   register: autofs_master
+  tags: autofs
 
 - name: AutoFS service
   service:
@@ -42,6 +46,7 @@
     state: restarted
   when: (autofs_config is changed) or
         (autofs_master is changed)
+  tags: autofs
 
 - name: Kodi advancedsettings.xml
   template:
@@ -51,20 +56,31 @@
     group: osmc
     mode: 0644
   register: kodi_advancedsettings
+  tags: kodi
+
+- name: Enable onboard audio
+  lineinfile:
+    path: /boot/config-user.txt
+    line: "dtparam=audio=on"
+  tags: config-user
 
 - name: IR sensor setup
   lineinfile:
     path: /boot/config-user.txt
     line: "dtoverlay=gpio-ir,gpio_pin={{ ir_pins.rx }}"
+  tags: 
+    - config-user
+    - lirc
 
 - name: PoE Hat fan control
   blockinfile:
     path: /boot/config-user.txt
     block: |
-      dtparam=poe_fan_temp0=65000,poe_fan_temp0_hyst=5000
-      dtparam=poe_fan_temp1=67000,poe_fan_temp1_hyst=2000
-      dtparam=poe_fan_temp2=68000,poe_fan_temp2_hyst=2000
-      dtparam=poe_fan_temp3=69000,poe_fan_temp3_hyst=2000
+      dtparam=poe_fan_temp0=70000,poe_fan_temp0_hyst=1000
+      dtparam=poe_fan_temp1=75000,poe_fan_temp1_hyst=5000
+      dtparam=poe_fan_temp2=80000,poe_fan_temp2_hyst=5000
+      dtparam=poe_fan_temp3=82000,poe_fan_temp3_hyst=2000
+  tags: config-user
 
 - name: IR remote config for Lirc
   template:
@@ -74,6 +90,7 @@
     group: root
     mode: 0644
   register: ir_remote_config
+  tags: lirc
 
 - name: Lirc config file
   file:
@@ -84,6 +101,7 @@
     owner: root
     group: root
   register: lirc_config
+  tags: lirc
 
 - name: Lirc service
   service:
@@ -91,6 +109,7 @@
     state: restarted
   when: (ir_remote_config is changed) or
         (lirc_config is changed)
+  tags: lirc
 
 - name: Kodi Lirckeymap
   template:
@@ -100,6 +119,7 @@
     group: osmc
     mode: 0644
   register: mediacenter_lircmap
+  tags: lirc
 
 - name: MediaCenter service
   service:
